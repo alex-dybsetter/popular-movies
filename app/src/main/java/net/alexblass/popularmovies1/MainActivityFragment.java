@@ -44,16 +44,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     // The URL to fetch the Movie JSON data
     private static final String REQUEST_BASE_URL =
-            "https://api.themoviedb.org/3/discover/movie?";
+            "https://api.themoviedb.org/3/movie/";
 
     // The query for a popularity sort
-    private static final String SORT_BY_POPULARITY_URL = "sort_by=popularity.desc";
+    private static final String SORT_BY_POPULARITY_URL = "popular?";
 
     // The query for a rating sort
-    private static final String SORT_BY_RATING_URL = "sort_by=vote_average.desc";
+    private static final String SORT_BY_RATING_URL = "top_rated?";
 
     // The API key
-    private static final String API_KEY = "API_KEY_HERE";
+    private static final String API_KEY = "&api_key=" + "YOUR_API_KEY_HERE";
 
     // A string to hold the complete sort preference URL
     private String sortPreference = createUrl(SORT_BY_POPULARITY_URL);

@@ -1,79 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/detail_title_tv"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="32sp"
-        android:fontFamily="sans-serif"
-        android:background="@color/colorAccent"
-        android:textColor="@android:color/white"/>
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/detail_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detail_title_tv"
-        android:layout_margin="8dp"
-        android:layout_marginLeft="16dp"
-        android:src="@drawable/ic_photo_white_48dp" />
+        <TextView
+            android:id="@+id/detail_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:fontFamily="sans-serif"
+            android:padding="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="32sp" />
 
-    <TextView
-        android:id="@+id/rating_text"
-        style="@style/labels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detail_title_tv"
-        android:layout_toRightOf="@id/detail_imageview"
-        android:layout_marginTop="8dp"
-        android:text="@string/rating" />
+        <ImageView
+            android:id="@+id/detail_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_title_tv"
+            android:layout_margin="8dp"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/ic_photo_white_48dp" />
 
-    <TextView
-        android:id="@+id/detail_rating_tv"
-        style="@style/values"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detail_title_tv"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/rating_text" />
+        <TextView
+            android:id="@+id/rating_text"
+            style="@style/labels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_title_tv"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/detail_imageview"
+            android:text="@string/rating" />
 
-    <TextView
-        android:id="@+id/release_date_text"
-        style="@style/labels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rating_text"
-        android:layout_toRightOf="@id/detail_imageview"
-        android:text="@string/released" />
+        <TextView
+            android:id="@+id/detail_rating_tv"
+            style="@style/values"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_title_tv"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/rating_text" />
 
-    <TextView
-        android:id="@+id/detail_release_date_tv"
-        style="@style/values"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detail_rating_tv"
-        android:layout_toRightOf="@id/release_date_text" />
+        <TextView
+            android:id="@+id/release_date_text"
+            style="@style/labels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rating_text"
+            android:layout_toRightOf="@id/detail_imageview"
+            android:text="@string/released" />
 
-    <TextView
-        android:id="@+id/synopsis_text"
-        style="@style/labels"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detail_imageview"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="16dp"
-        android:text="@string/synopsis" />
+        <TextView
+            android:id="@+id/detail_release_date_tv"
+            style="@style/values"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_rating_tv"
+            android:layout_toRightOf="@id/release_date_text" />
 
-    <TextView
-        android:id="@+id/detail_synopsis_tv"
-        style="@style/values"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_below="@id/synopsis_text" />
+        <TextView
+            android:id="@+id/synopsis_text"
+            style="@style/labels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_imageview"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/synopsis" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/detail_synopsis_tv"
+            style="@style/values"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/synopsis_text"
+            android:layout_marginLeft="16dp" />
+
+    </RelativeLayout>
+</ScrollView>
