@@ -52,9 +52,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     // The query for a rating sort
     private static final String SORT_BY_RATING_URL = "top_rated?";
 
-    // The API key
-    private static final String API_KEY = "&api_key=" + "YOUR_API_KEY";
-
     // A string to hold the complete sort preference URL
     private String sortPreference = createUrl(SORT_BY_POPULARITY_URL);
 
@@ -170,6 +167,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     // Creates the complete URL for sorting the movies
     public String createUrl(String sortPreference){
-        return REQUEST_BASE_URL + sortPreference + API_KEY;
+        return REQUEST_BASE_URL + sortPreference +
+                "&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
     }
 }
