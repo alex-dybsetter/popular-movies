@@ -39,7 +39,7 @@ public class DetailActivity extends AppCompatActivity {
             // If the intent has a Movie object Extra, read the information from it
             // and display it in the correct views
             if (intentThatStartedThisActivity.hasExtra("Movie")) {
-                currentMovie = (Movie) intentThatStartedThisActivity.getSerializableExtra("Movie");
+                currentMovie = intentThatStartedThisActivity.getParcelableExtra("Movie");
 
                 if (currentMovie.getImagePath() != null) {
                     Picasso.with(this)

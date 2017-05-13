@@ -1,14 +1,15 @@
 package net.alexblass.popularmovies1.models;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Movie object to store JSON values pulled from the network.
- * Implements Serializable so that Movie objects can be passed
+ * Implements Parcelable so that Movie objects can be passed
  * via Intent to open a new activity.
  */
 
-public class Movie implements Serializable {
+public class Movie implements Parcelable {
     // Information about the movie relevant to our app
     // Pulled from the JSON objects into Movie objects
     private String mId;
@@ -32,6 +33,15 @@ public class Movie implements Serializable {
         mOverview = overview;
         mRating = rating;
         mReleaseDate = releaseDate;
+    }
+
+    private Movie(Parcel source){
+        mId = source.readString();
+        mTitle = source.readString();
+        mImagePath = source.readString();
+        mOverview = source.readString();
+        mRating = source.readDouble();
+        mReleaseDate = source.readString();
     }
 
     public String getId() { return mId; }
@@ -59,4 +69,31 @@ public class Movie implements Serializable {
     public String getReleaseDate() {
         return mReleaseDate;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mId);
+        dest.writeString(mTitle);
+        dest.writeString(mImagePath);
+        dest.writeString(mOverview);
+        dest.writeDouble(mRating);
+        dest.writeString(mReleaseDate);
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+    };
 }
