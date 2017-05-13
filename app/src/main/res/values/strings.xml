@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="detail_activity">Movie Details</string>
+    <!--Display this string when there is no internet connectivity-->
+    <string name="no_connection">No internet connection.</string>
+    <!--Display this string when no movies are found from the API-->
+    <string name="no_results">No movies found.</string>
+    <!--Menu item to sort movies by popularity-->
+    <string name="sort_popular">Sort popularity</string>
+    <!--Menu item to sort movies by best rated-->
+    <string name="sort_rating">Sort ratings</string>
+
+    <string name="synopsis">Synopsis:</string>
+    <string name="rating">Rating:</string>
+    <string name="released">Released:</string>
+</resources>
