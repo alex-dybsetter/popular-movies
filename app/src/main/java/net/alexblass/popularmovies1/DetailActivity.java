@@ -3,13 +3,12 @@ package net.alexblass.popularmovies1;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import net.alexblass.popularmovies1.data.Movie;
+import net.alexblass.popularmovies1.models.Movie;
 
 // This activity shows a detail view of a selected Movie
 
@@ -43,15 +42,27 @@ public class DetailActivity extends AppCompatActivity {
                 currentMovie = (Movie) intentThatStartedThisActivity.getSerializableExtra("Movie");
 
                 if (currentMovie.getImagePath() != null) {
-                    Picasso.with(this).load(currentMovie.getImagePath()).into(mPoster);
-                } else {
-                    mPoster.setImageResource(R.drawable.ic_photo_white_48dp);
-                    mPoster.setColorFilter(R.color.colorAccent);
+                    Picasso.with(this)
+                            .load(currentMovie.getImagePath())
+                            .placeholder(R.drawable.ic_photo_white_48dp)
+                            .error(R.drawable.ic_photo_white_48dp)
+                            .into(mPoster);
                 }
                 mTitle.setText(currentMovie.getTitle());
-                mSynopsis.setText(currentMovie.getOverview());
+
+                if (!currentMovie.getOverview().isEmpty()) {
+                    mSynopsis.setText(currentMovie.getOverview());
+                } else {
+                    mSynopsis.setText(R.string.empty_value);
+                }
+
                 mRating.setText(Double.toString(currentMovie.getRating()));
-                mReleaseDate.setText(currentMovie.getReleaseDate());
+
+                if (!currentMovie.getReleaseDate().isEmpty()) {
+                    mReleaseDate.setText(currentMovie.getReleaseDate());
+                } else {
+                    mReleaseDate.setText(R.string.empty_value);
+                }
             }
         }
     }

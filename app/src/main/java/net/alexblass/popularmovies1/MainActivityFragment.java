@@ -19,7 +19,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import net.alexblass.popularmovies1.data.Movie;
+import net.alexblass.popularmovies1.models.Movie;
 import net.alexblass.popularmovies1.utilities.MovieAdapter;
 import net.alexblass.popularmovies1.utilities.MovieLoader;
 
@@ -53,7 +53,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final String SORT_BY_RATING_URL = "top_rated?";
 
     // The API key
-    private static final String API_KEY = "&api_key=" + "YOUR_API_KEY_HERE";
+    private static final String API_KEY = "&api_key=" + "YOUR_API_KEY";
 
     // A string to hold the complete sort preference URL
     private String sortPreference = createUrl(SORT_BY_POPULARITY_URL);

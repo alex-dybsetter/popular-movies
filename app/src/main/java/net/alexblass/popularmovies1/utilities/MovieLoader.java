@@ -3,7 +3,7 @@ package net.alexblass.popularmovies1.utilities;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
-import net.alexblass.popularmovies1.data.Movie;
+import net.alexblass.popularmovies1.models.Movie;
 
 import java.util.List;
 

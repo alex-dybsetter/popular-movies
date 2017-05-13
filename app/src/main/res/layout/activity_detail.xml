@@ -24,7 +24,8 @@
             android:layout_below="@id/detail_title_tv"
             android:layout_margin="8dp"
             android:layout_marginLeft="16dp"
-            android:src="@drawable/ic_photo_white_48dp" />
+            android:src="@drawable/ic_photo_white_48dp"
+            android:background="@color/colorPrimary"/>
 
         <TextView
             android:id="@+id/rating_text"

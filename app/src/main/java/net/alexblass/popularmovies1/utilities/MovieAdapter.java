@@ -1,8 +1,6 @@
 package net.alexblass.popularmovies1.utilities;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import net.alexblass.popularmovies1.R;
-import net.alexblass.popularmovies1.data.Movie;
+import net.alexblass.popularmovies1.models.Movie;
 
 import java.util.List;
 
@@ -42,9 +40,11 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         // Find the ImageView to set the current Movie poster to
         ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movie_poster);
         if (currentMovie.getImagePath() != null) {
-            Picasso.with(getContext()).load(currentMovie.getImagePath()).into(moviePoster);
-        } else {
-            moviePoster.setColorFilter(R.color.colorAccent);
+            Picasso.with(getContext())
+                    .load(currentMovie.getImagePath())
+                    .placeholder(R.drawable.ic_photo_white_48dp)
+                    .error(R.drawable.ic_photo_white_48dp)
+                    .into(moviePoster);
         }
 
 

@@ -3,7 +3,7 @@ package net.alexblass.popularmovies1.utilities;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.alexblass.popularmovies1.data.Movie;
+import net.alexblass.popularmovies1.models.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
