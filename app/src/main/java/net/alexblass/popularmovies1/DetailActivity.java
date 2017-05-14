@@ -10,30 +10,27 @@ import com.squareup.picasso.Picasso;
 
 import net.alexblass.popularmovies1.models.Movie;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 // This activity shows a detail view of a selected Movie
 
 public class DetailActivity extends AppCompatActivity {
+    @BindView(R.id.detail_imageview) ImageView mPoster;
+    @BindView(R.id.detail_title_tv) TextView mTitle;
+    @BindView(R.id.detail_synopsis_tv) TextView mSynopsis;
+    @BindView(R.id.detail_rating_tv) TextView mRating;
+    @BindView(R.id.detail_release_date_tv) TextView mReleaseDate;
 
     private Movie currentMovie;
-    private ImageView mPoster;
-    private TextView mTitle,
-        mSynopsis,
-        mRating,
-        mReleaseDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
 
         Intent intentThatStartedThisActivity = getIntent();
-
-        // Initialize the views from the layout
-        mPoster = (ImageView) findViewById(R.id.detail_imageview);
-        mTitle = (TextView) findViewById(R.id.detail_title_tv);
-        mSynopsis = (TextView) findViewById(R.id.detail_synopsis_tv);
-        mRating = (TextView) findViewById(R.id.detail_rating_tv);
-        mReleaseDate = (TextView) findViewById(R.id.detail_release_date_tv);
 
         if (intentThatStartedThisActivity != null) {
             // If the intent has a Movie object Extra, read the information from it

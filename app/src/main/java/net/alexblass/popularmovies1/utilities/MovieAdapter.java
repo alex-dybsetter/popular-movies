@@ -1,23 +1,16 @@
 package net.alexblass.popularmovies1.utilities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import net.alexblass.popularmovies1.R;
 import net.alexblass.popularmovies1.models.Movie;
-
-import java.util.List;
-
-import static java.lang.System.load;
 
 /**
  * Displays an array list of Movie posters in a RecyclerView with a GridLayout.
