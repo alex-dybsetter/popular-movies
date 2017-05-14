@@ -1,43 +1,43 @@
 package net.alexblass.popularmovies1;
 
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import net.alexblass.popularmovies1.models.Movie;
 import net.alexblass.popularmovies1.utilities.MovieAdapter;
-import net.alexblass.popularmovies1.utilities.MovieLoader;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.alexblass.popularmovies1.utilities.QueryUtils;
 
 /**
  * A fragment that shows the grid of movie posters
  * and launches a new activity when the user taps
  * a movie poster.
  */
-public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Movie>> {
+public class MainActivityFragment extends Fragment
+        implements MovieAdapter.ItemClickListener {
 
     // Displays a message when there is no Internet or when there are no Movies found
     private TextView mErrorMessageTextView;
 
     // Loading indicator for a responsive app experience
     private View mLoadingIndicator;
+
+    // A RecyclerView to hold all of our Movie posters and enable smooth scrolling
+    RecyclerView mRecyclerView;
 
     // Movie adapter to display the Movies correctly
     private MovieAdapter mAdapter;
@@ -53,7 +53,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final String SORT_BY_RATING_URL = "top_rated?";
 
     // A string to hold the complete sort preference URL
-    private String sortPreference = createUrl(SORT_BY_POPULARITY_URL);
+    private String sortPreference = formUrl(SORT_BY_POPULARITY_URL);
 
     // Empty constructor
     public MainActivityFragment() {
@@ -65,34 +65,19 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
 
-        mLoadingIndicator = rootView.findViewById(R.id.loading_indicator);
-
-        mAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
-
-        // Find the GridView and set our adapter to it so the posters
+        // Find the RecyclerView and set our adapter to it so the posters
         // display in a grid format
-        GridView gridView = (GridView) rootView.findViewById(R.id.movie_poster_grid);
-        gridView.setAdapter(mAdapter);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.movie_poster_grid);
+        mRecyclerView.setLayoutManager(
+                new GridLayoutManager(getActivity(), numberOfColumns(getContext())));
 
-        // When the user clicks a poster, launch a new activity with the detail view
-        // for the selected Movie
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
+        mAdapter = new MovieAdapter(getActivity(), new Movie[0]);
+        mAdapter.setClickListener(this);
 
-                // Pass the current Movie into the new Intent so we can access it's information
-                Movie currentMovie = mAdapter.getItem(position);
-                intent.putExtra("Movie", currentMovie);
+        mRecyclerView.setAdapter(mAdapter);
 
-                startActivity(intent);
-            }
-        });
-
+        mLoadingIndicator = rootView.findViewById(R.id.loading_indicator);
         mErrorMessageTextView = (TextView) rootView.findViewById(R.id.error_message_tv);
-        gridView.setEmptyView(mErrorMessageTextView);
-
-        LoaderManager loaderManager = getLoaderManager();
 
         ConnectivityManager cm = (ConnectivityManager) getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -102,40 +87,75 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         // If there is no connectivity, show an error message
         if (isConnected) {
-            loaderManager.initLoader(0, null, this);
+            loadData();
         } else {
             mLoadingIndicator.setVisibility(View.GONE);
+            showErrorMessage();
             mErrorMessageTextView.setText(R.string.no_connection);
         }
         return rootView;
     }
 
-    // Pass the URI to the Movie loader to load the data
+    // When the user clicks a poster, launch a new activity with the detail view
+    // for the selected Movie
     @Override
-    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-        Uri baseUri = Uri.parse(sortPreference);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
+    public void onItemClick(View view, int position) {
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
 
-        return new MovieLoader(getContext(), uriBuilder.toString());
+        // Pass the current Movie into the new Intent so we can access it's information
+        Movie currentMovie = mAdapter.getItem(position);
+        intent.putExtra("Movie", currentMovie);
+
+        startActivity(intent);
     }
 
-    // When the Loader finishes, add the list of Movies to the adapter's data set
-    @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> moviesList) {
-        mLoadingIndicator.setVisibility(View.GONE);
-        mErrorMessageTextView.setText(R.string.no_results);
-        mAdapter.clear();
+    // Create a new AsyncTask to pull the information from the server
+    public void loadData(){
+        showRecyclerView();
+        new FetchMoviesTask().execute(sortPreference);
+    }
 
-        if (moviesList != null && !moviesList.isEmpty()){
-            mAdapter.addAll(moviesList);
+    // Set the data view to visible and the error message view to invisible
+    public void showRecyclerView(){
+        mErrorMessageTextView.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    // Set the data view to invisible and the error message to visible
+    public void showErrorMessage(){
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessageTextView.setVisibility(View.VISIBLE);
+    }
+
+    public class FetchMoviesTask extends AsyncTask<String, Void, Movie[]>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
-    }
+        @Override
+        protected Movie[] doInBackground(String... params) {
+            if (params.length == 0) {
+                return null;
+            }
 
-    // Reset the loader to clear existing data
-    @Override
-    public void onLoaderReset(Loader<List<Movie>> loader) {
-        mAdapter.clear();
+            String requestUrl = params[0];
+            return QueryUtils.fetchMovieData(requestUrl);
+        }
+
+        @Override
+        protected void onPostExecute(Movie[] moviesList) {
+            mLoadingIndicator.setVisibility(View.GONE);
+            if (moviesList != null) {
+                showRecyclerView();
+                mAdapter.setMovies(moviesList);
+            } else {
+                showErrorMessage();
+                mErrorMessageTextView.setText(R.string.no_results);
+            }
+        }
     }
 
     // Create a menu to display the sort options
@@ -151,23 +171,34 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         int id = item.getItemId();
 
         if (id == R.id.action_sort_popularity) {
-            sortPreference = createUrl(SORT_BY_POPULARITY_URL);
-            getLoaderManager().restartLoader(0, null, this);
+            sortPreference = formUrl(SORT_BY_POPULARITY_URL);
+            new FetchMoviesTask().execute(sortPreference);
             return true;
         }
 
-        if (id == R.id.action_sort_rating){
-            sortPreference = createUrl(SORT_BY_RATING_URL);
-            getLoaderManager().restartLoader(0, null, this);
+        if (id == R.id.action_sort_rating) {
+            sortPreference = formUrl(SORT_BY_RATING_URL);
+            new FetchMoviesTask().execute(sortPreference);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    // Creates the complete URL for sorting the movies
-    public String createUrl(String sortPreference){
-        return REQUEST_BASE_URL + sortPreference +
+    // Creates the complete URL string for sorting the movies
+    public String formUrl(String sortPreference) {
+        String stringUrl = REQUEST_BASE_URL + sortPreference +
                 "&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
+
+        return stringUrl;
+    }
+
+    // Calculates the number of columns in the RecyclerView
+    public static int numberOfColumns(Context context) {
+        int columnWidth = 150;
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int numberofColumns = (int) (dpWidth / columnWidth);
+        return numberofColumns;
     }
 }

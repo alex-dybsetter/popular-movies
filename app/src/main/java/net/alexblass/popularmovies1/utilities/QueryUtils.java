@@ -35,7 +35,7 @@ public class QueryUtils {
     private QueryUtils(){}
 
     // Query the dataset and return a list of Movies
-    public static List<Movie> fetchMovieData(String requestUrl){
+    public static Movie[] fetchMovieData(String requestUrl){
         URL url = createUrl(requestUrl);
 
         // perform the HTTP request to the URL to receive a JSON response
@@ -47,7 +47,7 @@ public class QueryUtils {
         }
 
         // Extract the relevant fields and create a list of Movies
-        List<Movie> movies = extractFeatureFromJson(jsonResponse);
+        Movie[] movies = extractFeatureFromJson(jsonResponse);
 
         return movies;
     }
@@ -117,16 +117,17 @@ public class QueryUtils {
                 line = reader.readLine();
             }
         }
+
         return output.toString();
     }
 
     // Return a list of Movie objects built from parsing the JSON response
-    private static List<Movie> extractFeatureFromJson(String jsonResponse){
+    private static Movie[] extractFeatureFromJson(String jsonResponse){
         if (TextUtils.isEmpty(jsonResponse)){
             return null;
         }
 
-        List<Movie> movies = new ArrayList<>();
+        Movie[] movies = new Movie[0];
 
         // Try to parse the JSON response  If there's a formatting problem,
         // an exception will be thrown
@@ -134,6 +135,7 @@ public class QueryUtils {
             JSONObject baseJsonResponse = new JSONObject(jsonResponse);
 
             JSONArray results = baseJsonResponse.getJSONArray("results");
+            movies = new Movie[results.length()];
 
             for (int i = 0; i < results.length(); i++){
                 JSONObject currentMovie = results.getJSONObject(i);
@@ -164,7 +166,7 @@ public class QueryUtils {
 
                 Movie newMovie = new Movie(movieId, movieTitle, movieImagePath,
                                 movieOverview, movieRating, formattedDate);
-                movies.add(newMovie);
+                movies[i] = newMovie;
             }
         } catch (JSONException e){
             Log.e(LOG_TAG, "Problem parsing the JSON response.");

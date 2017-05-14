@@ -1,6 +1,9 @@
 package net.alexblass.popularmovies1.utilities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,40 +17,96 @@ import net.alexblass.popularmovies1.models.Movie;
 
 import java.util.List;
 
+import static java.lang.System.load;
+
 /**
- * Displays an array list of Movie posters in a GridView.
+ * Displays an array list of Movie posters in a RecyclerView with a GridLayout.
  */
 
-public class MovieAdapter extends ArrayAdapter<Movie> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
+    // An array to hold our movies pulled from the network
+    private Movie[] mMovies;
+
+    private LayoutInflater mInflater;
+    // A ClickListener so that when we click on a Movie, we can launch a new activity
+    private ItemClickListener mClickListener;
+    // The context of the Adapter so we can set the movie poster to the ImageView
+    private Context mContext;
 
     // Construct a new MovieAdapter
-    public MovieAdapter(Activity context, List<Movie> movies) {
-        super(context, 0, movies);
+    public MovieAdapter(Context context, Movie[] movies){
+        this.mInflater = LayoutInflater.from(context);
+        mMovies = movies;
+        mContext = context;
     }
 
+    // Notify adapter about dataset change to update views
+    public void setMovies(Movie[] movies) {
+        mMovies = movies;
+        notifyDataSetChanged();
+    }
+
+    // Creates new views when we need to to fill the screen
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public MovieAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater.inflate(R.layout.movie_item, parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
+    }
+
+    // Binds the movie poster image to the ImageView
+    @Override
+    public void onBindViewHolder(MovieAdapter.ViewHolder holder, int position) {
         // Get the currently selected movie
-        Movie currentMovie = getItem(position);
+        Movie currentMovie = mMovies[position];
 
-        // If there's an existing view we can reuse, use it otherwise
-        // inflate a new one
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.movie_item, parent, false);
-        }
-
-        // Find the ImageView to set the current Movie poster to
-        ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movie_poster);
+        // Set the movie poster to the view
         if (currentMovie.getImagePath() != null) {
-            Picasso.with(getContext())
+            Picasso.with(mContext)
                     .load(currentMovie.getImagePath())
                     .placeholder(R.drawable.ic_photo_white_48dp)
                     .error(R.drawable.ic_photo_white_48dp)
-                    .into(moviePoster);
+                    .into(holder.moviePoster);
+        }
+    }
+
+    // Get the number of movies in the array
+    @Override
+    public int getItemCount() {
+        return mMovies.length;
+    }
+
+    // Get the current Movie
+    public Movie getItem(int index){
+        return mMovies[index];
+    }
+
+    // Stores and recycles views to improve app performance and smoother scrolling
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+        public ImageView moviePoster;
+
+        public ViewHolder(View itemView){
+            super(itemView);
+            moviePoster = (ImageView) itemView.findViewById(R.id.movie_poster);
+            itemView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            if (mClickListener != null) {
+                mClickListener.onItemClick(v, getAdapterPosition());
+            }
+        }
+    }
 
-        return convertView;
+    // Catches clicks on the movie posters
+    public void setClickListener(ItemClickListener itemClickListener){
+        mClickListener = itemClickListener;
+    }
+
+    // MainActivity.java will respond to click events by implementing this method
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
     }
 }
