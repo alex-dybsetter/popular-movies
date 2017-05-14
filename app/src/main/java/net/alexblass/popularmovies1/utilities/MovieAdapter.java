@@ -12,6 +12,9 @@ import com.squareup.picasso.Picasso;
 import net.alexblass.popularmovies1.R;
 import net.alexblass.popularmovies1.models.Movie;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Displays an array list of Movie posters in a RecyclerView with a GridLayout.
  */
@@ -77,12 +80,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     // Stores and recycles views to improve app performance and smoother scrolling
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        public ImageView moviePoster;
+        public @BindView(R.id.movie_poster) ImageView moviePoster;
 
         public ViewHolder(View itemView){
             super(itemView);
-            moviePoster = (ImageView) itemView.findViewById(R.id.movie_poster);
             itemView.setOnClickListener(this);
+            ButterKnife.bind(this, itemView);
         }
 
         @Override
