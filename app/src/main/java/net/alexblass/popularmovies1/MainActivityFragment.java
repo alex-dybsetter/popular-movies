@@ -1,11 +1,13 @@
 package net.alexblass.popularmovies1;
 
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +22,7 @@ import android.widget.TextView;
 
 import net.alexblass.popularmovies1.models.Movie;
 import net.alexblass.popularmovies1.utilities.MovieAdapter;
-import net.alexblass.popularmovies1.utilities.QueryUtils;
+import net.alexblass.popularmovies1.utilities.MovieLoader;
 
 /**
  * A fragment that shows the grid of movie posters
@@ -28,7 +30,8 @@ import net.alexblass.popularmovies1.utilities.QueryUtils;
  * a movie poster.
  */
 public class MainActivityFragment extends Fragment
-        implements MovieAdapter.ItemClickListener {
+        implements MovieAdapter.ItemClickListener,
+        LoaderManager.LoaderCallbacks<Movie[]>{
 
     // Displays a message when there is no Internet or when there are no Movies found
     private TextView mErrorMessageTextView;
@@ -55,6 +58,9 @@ public class MainActivityFragment extends Fragment
     // A string to hold the complete sort preference URL
     private String sortPreference = formUrl(SORT_BY_POPULARITY_URL);
 
+    // The ID for the MovieLoader
+    private static final int MOVIE_LOADER_ID = 0;
+
     // Empty constructor
     public MainActivityFragment() {
     }
@@ -79,6 +85,8 @@ public class MainActivityFragment extends Fragment
         mLoadingIndicator = rootView.findViewById(R.id.loading_indicator);
         mErrorMessageTextView = (TextView) rootView.findViewById(R.id.error_message_tv);
 
+        LoaderManager loaderManager = getLoaderManager();
+
         ConnectivityManager cm = (ConnectivityManager) getContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -87,13 +95,41 @@ public class MainActivityFragment extends Fragment
 
         // If there is no connectivity, show an error message
         if (isConnected) {
-            loadData();
+            loaderManager.initLoader(MOVIE_LOADER_ID, null, this);
         } else {
             mLoadingIndicator.setVisibility(View.GONE);
             showErrorMessage();
             mErrorMessageTextView.setText(R.string.no_connection);
         }
         return rootView;
+    }
+
+    // Pass the URI to the Movie loader to load the data
+    @Override
+    public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
+        Uri baseUri = Uri.parse(sortPreference);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        return new MovieLoader(getContext(), uriBuilder.toString());
+    }
+
+    // When the Loader finishes, add the list of Movies to the adapter's data set
+    @Override
+    public void onLoadFinished(Loader<Movie[]> loader, Movie[] moviesList) {
+        mLoadingIndicator.setVisibility(View.GONE);
+        mErrorMessageTextView.setText(R.string.no_results);
+        mAdapter.setMovies(new Movie[0]);
+
+        if (moviesList != null && moviesList.length > 0){
+            mAdapter.setMovies(moviesList);
+        }
+
+    }
+
+    // Reset the loader to clear existing data
+    @Override
+    public void onLoaderReset(Loader<Movie[]> loader) {
+        mAdapter.setMovies(new Movie[0]);
     }
 
     // When the user clicks a poster, launch a new activity with the detail view
@@ -109,12 +145,6 @@ public class MainActivityFragment extends Fragment
         startActivity(intent);
     }
 
-    // Create a new AsyncTask to pull the information from the server
-    public void loadData(){
-        showRecyclerView();
-        new FetchMoviesTask().execute(sortPreference);
-    }
-
     // Set the data view to visible and the error message view to invisible
     public void showRecyclerView(){
         mErrorMessageTextView.setVisibility(View.INVISIBLE);
@@ -125,37 +155,6 @@ public class MainActivityFragment extends Fragment
     public void showErrorMessage(){
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageTextView.setVisibility(View.VISIBLE);
-    }
-
-    public class FetchMoviesTask extends AsyncTask<String, Void, Movie[]>{
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Movie[] doInBackground(String... params) {
-            if (params.length == 0) {
-                return null;
-            }
-
-            String requestUrl = params[0];
-            return QueryUtils.fetchMovieData(requestUrl);
-        }
-
-        @Override
-        protected void onPostExecute(Movie[] moviesList) {
-            mLoadingIndicator.setVisibility(View.GONE);
-            if (moviesList != null) {
-                showRecyclerView();
-                mAdapter.setMovies(moviesList);
-            } else {
-                showErrorMessage();
-                mErrorMessageTextView.setText(R.string.no_results);
-            }
-        }
     }
 
     // Create a menu to display the sort options
@@ -172,13 +171,13 @@ public class MainActivityFragment extends Fragment
 
         if (id == R.id.action_sort_popularity) {
             sortPreference = formUrl(SORT_BY_POPULARITY_URL);
-            new FetchMoviesTask().execute(sortPreference);
+            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
             return true;
         }
 
         if (id == R.id.action_sort_rating) {
             sortPreference = formUrl(SORT_BY_RATING_URL);
-            new FetchMoviesTask().execute(sortPreference);
+            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
             return true;
         }
 
