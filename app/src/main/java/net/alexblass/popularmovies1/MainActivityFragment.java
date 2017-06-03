@@ -5,10 +5,12 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -31,7 +33,8 @@ import net.alexblass.popularmovies1.utilities.MovieLoader;
  */
 public class MainActivityFragment extends Fragment
         implements MovieAdapter.ItemClickListener,
-        LoaderManager.LoaderCallbacks<Movie[]>{
+        LoaderManager.LoaderCallbacks<Movie[]>,
+        SharedPreferences.OnSharedPreferenceChangeListener{
 
     // Displays a message when there is no Internet or when there are no Movies found
     private TextView mErrorMessageTextView;
@@ -40,7 +43,7 @@ public class MainActivityFragment extends Fragment
     private View mLoadingIndicator;
 
     // A RecyclerView to hold all of our Movie posters and enable smooth scrolling
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
 
     // Movie adapter to display the Movies correctly
     private MovieAdapter mAdapter;
@@ -49,14 +52,11 @@ public class MainActivityFragment extends Fragment
     private static final String REQUEST_BASE_URL =
             "https://api.themoviedb.org/3/movie/";
 
-    // The query for a popularity sort
-    private static final String SORT_BY_POPULARITY_URL = "popular?";
-
-    // The query for a rating sort
-    private static final String SORT_BY_RATING_URL = "top_rated?";
+    // The user's sort setting preference in a String
+    private String sortSetting;
 
     // A string to hold the complete sort preference URL
-    private String sortPreference = formUrl(SORT_BY_POPULARITY_URL);
+    private String requestUrlWithSort;
 
     // The ID for the MovieLoader
     private static final int MOVIE_LOADER_ID = 0;
@@ -70,6 +70,10 @@ public class MainActivityFragment extends Fragment
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
+
+        // Set up our preferences to determine what sort order to display the movies in
+        // Default is by most popular
+        setupSharedPreferences();
 
         // Find the RecyclerView and set our adapter to it so the posters
         // display in a grid format
@@ -95,6 +99,7 @@ public class MainActivityFragment extends Fragment
 
         // If there is no connectivity, show an error message
         if (isConnected) {
+            showRecyclerView();
             loaderManager.initLoader(MOVIE_LOADER_ID, null, this);
         } else {
             mLoadingIndicator.setVisibility(View.GONE);
@@ -107,7 +112,10 @@ public class MainActivityFragment extends Fragment
     // Pass the URI to the Movie loader to load the data
     @Override
     public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
-        Uri baseUri = Uri.parse(sortPreference);
+        // Build our URL to the movie DB API with our default sort
+        requestUrlWithSort = formUrl();
+
+        Uri baseUri = Uri.parse(requestUrlWithSort);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         return new MovieLoader(getContext(), uriBuilder.toString());
@@ -157,36 +165,44 @@ public class MainActivityFragment extends Fragment
         mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
-    // Create a menu to display the sort options
+    // Create a menu to display the sort settings option
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    // Sort the movies by the user's sort preference
+    // Launch the settings sort order activity when selected
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_sort_popularity) {
-            sortPreference = formUrl(SORT_BY_POPULARITY_URL);
-            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
-            return true;
-        }
-
-        if (id == R.id.action_sort_rating) {
-            sortPreference = formUrl(SORT_BY_RATING_URL);
-            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+        // Launch settings preferences activity to allow user to toggle sort order
+        if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(getContext(), SettingsActivity.class);
+            getActivity().startActivity(startSettingsActivity);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    // Creates the complete URL string for sorting the movies
-    public String formUrl(String sortPreference) {
-        String stringUrl = REQUEST_BASE_URL + sortPreference +
+    // Get the user's preference for the sort order to display
+    private void setupSharedPreferences() {
+        // Get all of the values from shared preferences to set it up
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        // Get the default sort setting
+        sortSetting = sharedPreferences.getString(getString(R.string.pref_sort_key),
+                getString(R.string.pref_sort_popular_value));
+
+        // Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    // Creates the complete URL string for sorting the movies with the user's shared preference settings
+    public String formUrl() {
+        String stringUrl = REQUEST_BASE_URL + sortSetting +
                 "&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
 
         return stringUrl;
@@ -199,5 +215,23 @@ public class MainActivityFragment extends Fragment
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int numberofColumns = (int) (dpWidth / columnWidth);
         return numberofColumns;
+    }
+
+    // Restarts the loader to update the screen if the sort order preference changes
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_sort_key))) {
+            sortSetting = sharedPreferences.getString(getString(R.string.pref_sort_key),
+                    getString(R.string.pref_sort_popular_value));
+            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Unregister MainActivity as an OnPreferenceChangedListener to avoid any memory leaks.
+        PreferenceManager.getDefaultSharedPreferences(getContext())
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 }
