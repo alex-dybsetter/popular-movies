@@ -3,6 +3,8 @@ package net.alexblass.popularmovies1.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import static android.R.attr.duration;
+
 /**
  * Movie object to store JSON values pulled from the network.
  * Implements Parcelable so that Movie objects can be passed
@@ -18,6 +20,7 @@ public class Movie implements Parcelable {
     private String mOverview;
     private double mRating;
     private String mReleaseDate;
+    private int mDuration;
 
     // Base URL for image paths
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
@@ -26,13 +29,14 @@ public class Movie implements Parcelable {
     private static final String IMAGE_SIZE = "w185";
 
     // Constructor to set the values of a particular Movie
-    public Movie(String id, String title, String img, String overview, double rating, String releaseDate){
+    public Movie(String id, String title, String img, String overview, double rating, String releaseDate, int duration){
         mId = id;
         mTitle = title;
         mImagePath = img;
         mOverview = overview;
         mRating = rating;
         mReleaseDate = releaseDate;
+        mDuration = duration;
     }
 
     private Movie(Parcel source){
@@ -42,6 +46,7 @@ public class Movie implements Parcelable {
         mOverview = source.readString();
         mRating = source.readDouble();
         mReleaseDate = source.readString();
+        mDuration = source.readInt();
     }
 
     public String getId() { return mId; }
@@ -70,6 +75,10 @@ public class Movie implements Parcelable {
         return mReleaseDate;
     }
 
+    public int getDuration() {
+        return mDuration;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -83,6 +92,7 @@ public class Movie implements Parcelable {
         dest.writeString(mOverview);
         dest.writeDouble(mRating);
         dest.writeString(mReleaseDate);
+        dest.writeInt(mDuration);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

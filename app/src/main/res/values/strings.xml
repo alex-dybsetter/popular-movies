@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Popular Movies</string>
     <string name="detail_activity">Movie Details</string>
     <!--Display this string when there is no internet connectivity-->
@@ -7,10 +7,14 @@
     <string name="no_results">No movies found.</string>
     <!--Menu item to sort movies by popularity-->
 
-    <string name="synopsis">Synopsis:</string>
-    <string name="rating">Rating:</string>
-    <string name="released">Released:</string>
+    <!--Text for favorite button-->
+    <string name="favorite_btn_txt">Mark as favorite</string>
+    <!--Empty string for when there is no value for something in the Movie DB-->
     <string name="empty_value">No information found.</string>
+
+    <string name="duration_units">
+        <xliff:g id="mins">%1$s</xliff:g> mins
+    </string>
 
 
     <string name="settings_activity">Settings</string>

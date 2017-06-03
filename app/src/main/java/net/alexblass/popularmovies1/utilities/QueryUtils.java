@@ -3,6 +3,7 @@ package net.alexblass.popularmovies1.utilities;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.alexblass.popularmovies1.BuildConfig;
 import net.alexblass.popularmovies1.models.Movie;
 
 import org.json.JSONArray;
@@ -152,7 +153,7 @@ public class QueryUtils {
 
                 // Format the release date
                 SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
-                SimpleDateFormat myFormat = new SimpleDateFormat("MM-dd-yyyy");
+                SimpleDateFormat myFormat = new SimpleDateFormat("yyyy");
                 String formattedDate = "";
 
                 try {
@@ -163,12 +164,36 @@ public class QueryUtils {
                 }
 
                 Movie newMovie = new Movie(movieId, movieTitle, movieImagePath,
-                                movieOverview, movieRating, formattedDate);
+                                movieOverview, movieRating, formattedDate, getMovieDuration(movieId));
                 movies[i] = newMovie;
             }
         } catch (JSONException e){
             Log.e(LOG_TAG, "Problem parsing the JSON response.");
         }
         return movies;
+    }
+
+    private static int getMovieDuration(String id){
+        String movieUrlString = "https://api.themoviedb.org/3/movie/" + id
+                + "?language=en-US&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
+
+        URL movieUrl = createUrl(movieUrlString);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(movieUrl);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request", e);
+        }
+
+        int runtime = 0;
+        try{
+            JSONObject baseJsonResponse = new JSONObject(jsonResponse);
+                runtime = baseJsonResponse.getInt("runtime");
+        } catch (JSONException e){
+            Log.e(LOG_TAG, "Problem parsing the JSON response.");
+        }
+
+        return runtime;
     }
 }

@@ -21,6 +21,7 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.detail_synopsis_tv) TextView mSynopsis;
     @BindView(R.id.detail_rating_tv) TextView mRating;
     @BindView(R.id.detail_release_date_tv) TextView mReleaseDate;
+    @BindView(R.id.detail_duration_tv) TextView mDuration;
 
     private Movie currentMovie;
 
@@ -60,6 +61,9 @@ public class DetailActivity extends AppCompatActivity {
                 } else {
                     mReleaseDate.setText(R.string.empty_value);
                 }
+
+                mDuration.setText(getString(
+                        R.string.duration_units, Integer.toString(currentMovie.getDuration())));
             }
         }
     }
