@@ -37,7 +37,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
     }
 
     // Notify adapter about dataset change to update views
-    public void setMovies(ArrayList<String> trailers) {
+    public void setTrailers(ArrayList<String> trailers) {
         mTrailers = trailers;
         notifyDataSetChanged();
     }
@@ -50,7 +50,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
         return viewHolder;
     }
 
-    // Binds the movie poster image to the ImageView
+    // Binds the trailer number to the text view
     @Override
     public void onBindViewHolder(TrailerListAdapter.ViewHolder holder, int position) {
         holder.trailerIdTv.setText(
@@ -71,8 +71,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
     // Stores and recycles views to improve app performance and smoother scrolling
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        public @BindView(R.id.trailer_id)
-        TextView trailerIdTv;
+        public @BindView(R.id.trailer_id) TextView trailerIdTv;
 
         public ViewHolder(View itemView){
             super(itemView);

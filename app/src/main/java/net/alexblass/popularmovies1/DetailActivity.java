@@ -9,11 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import net.alexblass.popularmovies1.models.Movie;
+import net.alexblass.popularmovies1.utilities.ReviewListAdapter;
 import net.alexblass.popularmovies1.utilities.TrailerListAdapter;
 
 import butterknife.BindView;
@@ -30,6 +30,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerListAdap
     @BindView(R.id.detail_duration_tv) TextView mDuration;
 
     @BindView(R.id.movie_trailers_list) RecyclerView mTrailersList;
+    @BindView(R.id.movie_reviews_list) RecyclerView mReviewsList;
 
     private Movie currentMovie;
 
@@ -78,10 +79,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerListAdap
             }
 
             // Inflate the recycler view with the trailers for the movie
-            TrailerListAdapter mAdapter = new TrailerListAdapter(this, currentMovie.getTrailerKeys());
-            mAdapter.setClickListener(this);
-            mTrailersList.setAdapter(mAdapter);
+            TrailerListAdapter mTrailerAdapter = new TrailerListAdapter(this, currentMovie.getTrailerKeys());
+            mTrailerAdapter.setClickListener(this);
+            mTrailersList.setAdapter(mTrailerAdapter);
             mTrailersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+            // Inflate the recycler view with the reviews for the movie
+            ReviewListAdapter mReviewAdapter = new ReviewListAdapter(this, currentMovie.getReviews());
+            mReviewsList.setAdapter(mReviewAdapter);
+            mReviewsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         }
     }
 

@@ -22,6 +22,7 @@ public class Movie implements Parcelable {
     private String mReleaseDate;
     private int mDuration;
     private ArrayList<String> mTrailerKeys;
+    private ArrayList<Review> mReviews;
 
     // Base URL for image paths
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
@@ -30,7 +31,9 @@ public class Movie implements Parcelable {
     private static final String IMAGE_SIZE = "w185";
 
     // Constructor to set the values of a particular Movie
-    public Movie(String id, String title, String img, String overview, double rating, String releaseDate, int duration, ArrayList<String> trailerKeys){
+    public Movie(String id, String title, String img, String overview, double rating,
+                 String releaseDate, int duration, ArrayList<String> trailerKeys,
+                 ArrayList<Review> reviews){
         mId = id;
         mTitle = title;
         mImagePath = img;
@@ -39,6 +42,7 @@ public class Movie implements Parcelable {
         mReleaseDate = releaseDate;
         mDuration = duration;
         mTrailerKeys = trailerKeys;
+        mReviews = reviews;
     }
 
     private Movie(Parcel source){
@@ -50,6 +54,7 @@ public class Movie implements Parcelable {
         mReleaseDate = source.readString();
         mDuration = source.readInt();
         mTrailerKeys = source.readArrayList(null);
+        mReviews = source.readArrayList(Review.class.getClassLoader());
     }
 
     public String getId() { return mId; }
@@ -86,6 +91,10 @@ public class Movie implements Parcelable {
         return mTrailerKeys;
     }
 
+    public ArrayList<Review> getReviews() {
+        return mReviews;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -101,6 +110,7 @@ public class Movie implements Parcelable {
         dest.writeString(mReleaseDate);
         dest.writeInt(mDuration);
         dest.writeList(mTrailerKeys);
+        dest.writeList(mReviews);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

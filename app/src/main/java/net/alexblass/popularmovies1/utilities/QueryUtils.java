@@ -5,6 +5,7 @@ import android.util.Log;
 
 import net.alexblass.popularmovies1.BuildConfig;
 import net.alexblass.popularmovies1.models.Movie;
+import net.alexblass.popularmovies1.models.Review;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -171,7 +172,7 @@ public class QueryUtils {
 
                 Movie newMovie = new Movie(movieId, movieTitle, movieImagePath,
                                 movieOverview, movieRating, formattedDate,
-                                getMovieDuration(movieId), movieTrailers);
+                                getMovieDuration(movieId), movieTrailers, getReviews(movieId));
                 movies[i] = newMovie;
             }
         } catch (JSONException e){
@@ -222,7 +223,6 @@ public class QueryUtils {
             Log.e(LOG_TAG, "Problem making the HTTP request", e);
         }
 
-        int runtime = 0;
         try{
             JSONObject baseJsonResponse = new JSONObject(jsonResponse);
 
@@ -241,5 +241,39 @@ public class QueryUtils {
         }
 
         return result;
+    }
+
+    // Get the movie's reviews
+    public static ArrayList<Review> getReviews(String id){
+        String reviewUrlString = BASE_URL + id + "/reviews" +
+                "?language=en-US&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
+
+        URL reviewUrl = createUrl(reviewUrlString);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(reviewUrl);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request", e);
+        }
+
+        ArrayList<Review> reviews = null;
+
+        try{
+            JSONObject baseJsonResponse = new JSONObject(jsonResponse);
+
+            JSONArray results = baseJsonResponse.getJSONArray("results");
+
+            reviews = new ArrayList<>();
+            for (int i = 0; i < results.length(); i++){
+                JSONObject review = results.getJSONObject(i);
+                Review reviewerReviewPair = new Review(review.getString("author"), review.getString("content"));
+                reviews.add(reviewerReviewPair);
+            }
+
+        } catch (JSONException e){
+            Log.e(LOG_TAG, "Problem parsing the JSON response.");
+        }
+        return reviews;
     }
 }
