@@ -16,6 +16,12 @@
         <xliff:g id="mins">%1$s</xliff:g> mins
     </string>
 
+    <string name="trailers_label">Trailers:</string>
+
+    <string name="trailer_tag">
+        Trailer <xliff:g id="mins">%1$s</xliff:g>
+    </string>
+
 
     <string name="settings_activity">Settings</string>
 

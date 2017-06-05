@@ -88,6 +88,7 @@ public class MainActivityFragment extends Fragment
         mRecyclerView.setAdapter(mAdapter);
 
         mLoadingIndicator = rootView.findViewById(R.id.loading_indicator);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
         mErrorMessageTextView = (TextView) rootView.findViewById(R.id.error_message_tv);
 
         LoaderManager loaderManager = getLoaderManager();

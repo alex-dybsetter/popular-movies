@@ -3,7 +3,7 @@ package net.alexblass.popularmovies1.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import static android.R.attr.duration;
+import java.util.ArrayList;
 
 /**
  * Movie object to store JSON values pulled from the network.
@@ -21,6 +21,7 @@ public class Movie implements Parcelable {
     private double mRating;
     private String mReleaseDate;
     private int mDuration;
+    private ArrayList<String> mTrailerKeys;
 
     // Base URL for image paths
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
@@ -29,7 +30,7 @@ public class Movie implements Parcelable {
     private static final String IMAGE_SIZE = "w185";
 
     // Constructor to set the values of a particular Movie
-    public Movie(String id, String title, String img, String overview, double rating, String releaseDate, int duration){
+    public Movie(String id, String title, String img, String overview, double rating, String releaseDate, int duration, ArrayList<String> trailerKeys){
         mId = id;
         mTitle = title;
         mImagePath = img;
@@ -37,6 +38,7 @@ public class Movie implements Parcelable {
         mRating = rating;
         mReleaseDate = releaseDate;
         mDuration = duration;
+        mTrailerKeys = trailerKeys;
     }
 
     private Movie(Parcel source){
@@ -47,6 +49,7 @@ public class Movie implements Parcelable {
         mRating = source.readDouble();
         mReleaseDate = source.readString();
         mDuration = source.readInt();
+        mTrailerKeys = source.readArrayList(null);
     }
 
     public String getId() { return mId; }
@@ -79,6 +82,10 @@ public class Movie implements Parcelable {
         return mDuration;
     }
 
+    public ArrayList<String> getTrailerKeys(){
+        return mTrailerKeys;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -93,6 +100,7 @@ public class Movie implements Parcelable {
         dest.writeDouble(mRating);
         dest.writeString(mReleaseDate);
         dest.writeInt(mDuration);
+        dest.writeList(mTrailerKeys);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

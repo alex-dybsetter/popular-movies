@@ -20,6 +20,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * Helper methods to request and receive Movie data
@@ -28,6 +29,9 @@ import java.text.SimpleDateFormat;
 public class QueryUtils {
     // Log tag for error messages
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
+
+    // The base URL for the Move DB API
+    private static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
 
     // Empty private constructor because no QueryUtils
     // object should be initialized
@@ -163,8 +167,11 @@ public class QueryUtils {
                     e.printStackTrace();
                 }
 
+                ArrayList<String> movieTrailers = getTrailers(movieId);
+
                 Movie newMovie = new Movie(movieId, movieTitle, movieImagePath,
-                                movieOverview, movieRating, formattedDate, getMovieDuration(movieId));
+                                movieOverview, movieRating, formattedDate,
+                                getMovieDuration(movieId), movieTrailers);
                 movies[i] = newMovie;
             }
         } catch (JSONException e){
@@ -173,8 +180,10 @@ public class QueryUtils {
         return movies;
     }
 
+    // Helper method to get the duration of the movie at the Movie's individual URL,
+    // not from the list of movies JSON result
     private static int getMovieDuration(String id){
-        String movieUrlString = "https://api.themoviedb.org/3/movie/" + id
+        String movieUrlString = BASE_URL + id
                 + "?language=en-US&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
 
         URL movieUrl = createUrl(movieUrlString);
@@ -195,5 +204,42 @@ public class QueryUtils {
         }
 
         return runtime;
+    }
+
+    // Get the Youtube keys for the Movie's trailers
+    public static ArrayList<String> getTrailers(String id){
+        String trailerUrlString = BASE_URL + id + "/videos" +
+                "?language=en-US&api_key=" + BuildConfig.THE_MOVIE_DB_API_TOKEN;
+
+        ArrayList<String> result = new ArrayList();
+
+        URL trailerUrl = createUrl(trailerUrlString);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(trailerUrl);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request", e);
+        }
+
+        int runtime = 0;
+        try{
+            JSONObject baseJsonResponse = new JSONObject(jsonResponse);
+
+            JSONArray results = baseJsonResponse.getJSONArray("results");
+
+            // Check if each video is a trailer, and if it is, add it to our array
+            for (int i = 0; i < results.length(); i++){
+                JSONObject video = results.getJSONObject(i);
+                if (video.getString("type").equalsIgnoreCase("Trailer")){
+                    result.add(video.getString("key"));
+                }
+            }
+
+        } catch (JSONException e){
+            Log.e(LOG_TAG, "Problem parsing the JSON response.");
+        }
+
+        return result;
     }
 }
