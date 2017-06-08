@@ -1,4 +1,4 @@
-package net.alexblass.popularmovies1.utilities;
+package net.alexblass.popularmovies.utilities;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import net.alexblass.popularmovies1.R;
-import net.alexblass.popularmovies1.models.Review;
+import net.alexblass.popularmovies.R;
+import net.alexblass.popularmovies.models.Review;
 
 import java.util.ArrayList;
 

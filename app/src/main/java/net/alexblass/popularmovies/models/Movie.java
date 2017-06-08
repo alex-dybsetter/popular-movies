@@ -1,4 +1,4 @@
-package net.alexblass.popularmovies1.models;
+package net.alexblass.popularmovies.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

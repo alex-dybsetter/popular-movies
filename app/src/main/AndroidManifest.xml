@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.alexblass.popularmovies1">
+    package="net.alexblass.popularmovies">
 
     <!-- Request internet to access movie api database -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,27 +14,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="net.alexblass.popularmovies.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity"
-            android:parentActivityName=".MainActivity"
+        <activity android:name="net.alexblass.popularmovies.DetailActivity"
+            android:parentActivityName="net.alexblass.popularmovies.MainActivity"
             android:label="@string/detail_activity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value="net.alexblass.popularmovies.MainActivity"/>
         </activity>
-        <activity android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity"
+        <activity android:name="net.alexblass.popularmovies.SettingsActivity"
+            android:parentActivityName="net.alexblass.popularmovies.MainActivity"
             android:label="@string/settings_activity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value="net.alexblass.popularmovies.MainActivity"/>
         </activity>
+
+        <provider
+            android:authorities="net.alexblass.popularmovies"
+            android:name=".data.FavoritesProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

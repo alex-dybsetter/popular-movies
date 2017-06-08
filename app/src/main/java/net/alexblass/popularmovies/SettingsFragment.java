@@ -1,16 +1,13 @@
-package net.alexblass.popularmovies1;
+package net.alexblass.popularmovies;
 
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.widget.Toast;
 
 /**
  * A settings fragment to allow users to toggle what sort order they want to view

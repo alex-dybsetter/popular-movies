@@ -1,4 +1,4 @@
-package net.alexblass.popularmovies1;
+package net.alexblass.popularmovies;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,4 +1,4 @@
-package net.alexblass.popularmovies1;
+package net.alexblass.popularmovies;
 
 import org.junit.Test;
 

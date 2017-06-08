@@ -7,8 +7,6 @@
     <string name="no_results">No movies found.</string>
     <!--Menu item to sort movies by popularity-->
 
-    <!--Text for favorite button-->
-    <string name="favorite_btn_txt">Mark as favorite</string>
     <!--Empty string for when there is no value for something in the Movie DB-->
     <string name="empty_value">No information found.</string>
 

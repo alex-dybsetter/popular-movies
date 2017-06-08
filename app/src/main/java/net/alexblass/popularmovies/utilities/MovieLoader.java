@@ -1,11 +1,9 @@
-package net.alexblass.popularmovies1.utilities;
+package net.alexblass.popularmovies.utilities;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
-import net.alexblass.popularmovies1.models.Movie;
-
-import java.util.List;
+import net.alexblass.popularmovies.models.Movie;
 
 /**
  * Loads a list of Movies using the AsyncTask to perform the

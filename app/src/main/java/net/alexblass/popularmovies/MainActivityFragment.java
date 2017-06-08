@@ -1,7 +1,8 @@
-package net.alexblass.popularmovies1;
+package net.alexblass.popularmovies;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
@@ -22,9 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import net.alexblass.popularmovies1.models.Movie;
-import net.alexblass.popularmovies1.utilities.MovieAdapter;
-import net.alexblass.popularmovies1.utilities.MovieLoader;
+import net.alexblass.popularmovies.data.FavoritesContract;
+import net.alexblass.popularmovies.models.Movie;
+import net.alexblass.popularmovies.utilities.MovieAdapter;
+import net.alexblass.popularmovies.utilities.MovieLoader;
+
+import static android.R.attr.id;
 
 /**
  * A fragment that shows the grid of movie posters
@@ -150,6 +154,11 @@ public class MainActivityFragment extends Fragment
         // Pass the current Movie into the new Intent so we can access it's information
         Movie currentMovie = mAdapter.getItem(position);
         intent.putExtra("Movie", currentMovie);
+
+        // Form the URI to the current movie and pass it to the next activity
+        Uri currentMovieUri = ContentUris.withAppendedId(FavoritesContract.FavoritesEntry.CONTENT_URI,
+                Long.parseLong(currentMovie.getId()));
+        intent.setData(currentMovieUri);
 
         startActivity(intent);
     }

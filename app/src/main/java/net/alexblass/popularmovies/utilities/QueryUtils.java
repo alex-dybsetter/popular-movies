@@ -1,11 +1,11 @@
-package net.alexblass.popularmovies1.utilities;
+package net.alexblass.popularmovies.utilities;
 
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.alexblass.popularmovies1.BuildConfig;
-import net.alexblass.popularmovies1.models.Movie;
-import net.alexblass.popularmovies1.models.Review;
+import net.alexblass.popularmovies.BuildConfig;
+import net.alexblass.popularmovies.models.Movie;
+import net.alexblass.popularmovies.models.Review;
 
 import org.json.JSONArray;
 import org.json.JSONException;

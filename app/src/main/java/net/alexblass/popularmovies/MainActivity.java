@@ -1,4 +1,4 @@
-package net.alexblass.popularmovies1;
+package net.alexblass.popularmovies;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

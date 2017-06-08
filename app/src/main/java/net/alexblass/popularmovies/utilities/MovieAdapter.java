@@ -1,4 +1,4 @@
-package net.alexblass.popularmovies1.utilities;
+package net.alexblass.popularmovies.utilities;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,8 +9,8 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import net.alexblass.popularmovies1.R;
-import net.alexblass.popularmovies1.models.Movie;
+import net.alexblass.popularmovies.R;
+import net.alexblass.popularmovies.models.Movie;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
