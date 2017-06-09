@@ -66,7 +66,9 @@ public class Movie implements Parcelable {
     public String getImagePath() {
         if (mImagePath.isEmpty()){
             return null;
-        } else {
+        } else if (mImagePath.startsWith(BASE_IMAGE_URL)){
+            return mImagePath;
+        }else {
             return BASE_IMAGE_URL + IMAGE_SIZE + mImagePath;
         }
     }

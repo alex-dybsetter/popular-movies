@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import static android.R.attr.id;
+import net.alexblass.popularmovies.models.Movie;
 
 /**
  * A Content provider to access our data.
@@ -71,21 +71,6 @@ public class FavoritesProvider extends ContentProvider {
 
                 // Notify all listeners that the data has changed
                 getContext().getContentResolver().notifyChange(uri, null);
-
-                // TODO: change the id to the movie ID
-//                String[] projection = {
-//                        FavoritesContract.FavoritesEntry._ID,
-//                        FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID };
-//
-//                String selection = FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + " = ? ";
-//
-//                String[] selectionArgs = { Long.toString(id)};
-//
-//                Cursor thisMovieCursor = query(uri, projection, selection, selectionArgs, null);
-//
-//                long movieId = thisMovieCursor.getLong(MOVIE_ID_INDEX);
-//
-//                Log.e("add new movie id", movieId + "");
 
                 return ContentUris.withAppendedId(uri, id);
             default:

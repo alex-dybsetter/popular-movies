@@ -57,7 +57,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         Movie currentMovie = mMovies[position];
 
         // Set the movie poster to the view
-        if (currentMovie.getImagePath() != null) {
+        if (currentMovie != null && currentMovie.getImagePath() != null) {
             Picasso.with(mContext)
                     .load(currentMovie.getImagePath())
                     .placeholder(R.drawable.ic_photo_white_48dp)

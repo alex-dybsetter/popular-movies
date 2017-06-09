@@ -28,8 +28,6 @@ import net.alexblass.popularmovies.models.Movie;
 import net.alexblass.popularmovies.utilities.MovieAdapter;
 import net.alexblass.popularmovies.utilities.MovieLoader;
 
-import static android.R.attr.id;
-
 /**
  * A fragment that shows the grid of movie posters
  * and launches a new activity when the user taps
@@ -42,6 +40,9 @@ public class MainActivityFragment extends Fragment
 
     // Displays a message when there is no Internet or when there are no Movies found
     private TextView mErrorMessageTextView;
+
+    // The error message to display
+    private String mErrorMessage;
 
     // Loading indicator for a responsive app experience
     private View mLoadingIndicator;
@@ -62,8 +63,11 @@ public class MainActivityFragment extends Fragment
     // A string to hold the complete sort preference URL
     private String requestUrlWithSort;
 
-    // The ID for the MovieLoader
-    private static final int MOVIE_LOADER_ID = 0;
+    // The ID for the MovieLoader for ALL movies
+    private static final int ALL_MOVIE_LOADER_ID = 0;
+
+    // The ID for the MovieLoader from our FAVORITES database
+    private static final int FAVES_MOVIE_LOADER_ID = 1;
 
     // Empty constructor
     public MainActivityFragment() {
@@ -105,7 +109,7 @@ public class MainActivityFragment extends Fragment
         // If there is no connectivity, show an error message
         if (isConnected) {
             showRecyclerView();
-            loaderManager.initLoader(MOVIE_LOADER_ID, null, this);
+            loaderManager.initLoader(ALL_MOVIE_LOADER_ID, null, this);
         } else {
             mLoadingIndicator.setVisibility(View.GONE);
             showErrorMessage();
@@ -114,23 +118,62 @@ public class MainActivityFragment extends Fragment
         return rootView;
     }
 
+//    // Pass the URI to the Movie loader to load the data
+//    @Override
+//    public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
+//        if(id == ALL_MOVIE_LOADER_ID) {
+//            // Build our URL to the movie DB API with our default sort
+//            requestUrlWithSort = formUrl();
+//
+//            Uri baseUri = Uri.parse(requestUrlWithSort);
+//            Uri.Builder uriBuilder = baseUri.buildUpon();
+//
+//            return new MovieLoader(getContext(), uriBuilder.toString());
+//        } else if (id == FAVES_MOVIE_LOADER_ID){
+//            // Since we're pulling our data from the database, we do not need a URL
+//            return new MovieLoader(getContext(), null);
+//        } else {
+//            return null;
+//        }
+//    }
+
+
     // Pass the URI to the Movie loader to load the data
     @Override
     public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
-        // Build our URL to the movie DB API with our default sort
-        requestUrlWithSort = formUrl();
 
-        Uri baseUri = Uri.parse(requestUrlWithSort);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
+        switch(id) {
+            case ALL_MOVIE_LOADER_ID:
+                // Build our URL to the movie DB API with our default sort
+                requestUrlWithSort = formUrl();
 
-        return new MovieLoader(getContext(), uriBuilder.toString());
+                Uri baseUri = Uri.parse(requestUrlWithSort);
+                Uri.Builder uriBuilder = baseUri.buildUpon();
+
+                mErrorMessage = getString(R.string.no_results);
+                return new MovieLoader(getContext(), uriBuilder.toString());
+            case FAVES_MOVIE_LOADER_ID:
+                // Since we're pulling our data from the database, we do not need a URL
+                MovieLoader movieLoader = new MovieLoader(getContext(), null);
+
+                // If there are no favorites, show an error message
+                if(movieLoader.loadInBackground() == null){
+                    mLoadingIndicator.setVisibility(View.GONE);
+                    mErrorMessage = getString(R.string.no_favorites);
+                    showErrorMessage();
+                }
+                return movieLoader;
+            default:
+                return null;
+        }
     }
+
 
     // When the Loader finishes, add the list of Movies to the adapter's data set
     @Override
     public void onLoadFinished(Loader<Movie[]> loader, Movie[] moviesList) {
         mLoadingIndicator.setVisibility(View.GONE);
-        mErrorMessageTextView.setText(R.string.no_results);
+        mErrorMessageTextView.setText(mErrorMessage);
         mAdapter.setMovies(new Movie[0]);
 
         if (moviesList != null && moviesList.length > 0){
@@ -164,13 +207,13 @@ public class MainActivityFragment extends Fragment
     }
 
     // Set the data view to visible and the error message view to invisible
-    public void showRecyclerView(){
+    private void showRecyclerView(){
         mErrorMessageTextView.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     // Set the data view to invisible and the error message to visible
-    public void showErrorMessage(){
+    private void showErrorMessage(){
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
@@ -186,6 +229,19 @@ public class MainActivityFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        // Restart activity with only the favorites pulled from our database
+        if (id == R.id.action_view_favorites) {
+            loadFavorites();
+            return true;
+        }
+
+        // Pull all movies from the API
+        if (id == R.id.action_view_all) {
+            getLoaderManager().destroyLoader(FAVES_MOVIE_LOADER_ID);
+            getLoaderManager().restartLoader(0, null, this);
+            return true;
+        }
 
         // Launch settings preferences activity to allow user to toggle sort order
         if (id == R.id.action_settings) {
@@ -233,7 +289,7 @@ public class MainActivityFragment extends Fragment
         if (key.equals(getString(R.string.pref_sort_key))) {
             sortSetting = sharedPreferences.getString(getString(R.string.pref_sort_key),
                     getString(R.string.pref_sort_popular_value));
-            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+            getLoaderManager().restartLoader(ALL_MOVIE_LOADER_ID, null, this);
         }
     }
 
@@ -243,5 +299,12 @@ public class MainActivityFragment extends Fragment
         // Unregister MainActivity as an OnPreferenceChangedListener to avoid any memory leaks.
         PreferenceManager.getDefaultSharedPreferences(getContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    // Load our favorite movies from a our database
+    private void loadFavorites(){
+        getLoaderManager().destroyLoader(ALL_MOVIE_LOADER_ID);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+        getLoaderManager().initLoader(FAVES_MOVIE_LOADER_ID, null, this);
     }
 }
