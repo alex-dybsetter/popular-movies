@@ -1,15 +1,7 @@
 package net.alexblass.popularmovies.data;
 
-/**
- * Created by ajbla_000 on 6/5/2017.
- */
-
 import android.net.Uri;
 import android.provider.BaseColumns;
-
-import net.alexblass.popularmovies.models.Review;
-
-import java.util.ArrayList;
 
 /**
  * Defines table and column names for the offline movie favorites database.

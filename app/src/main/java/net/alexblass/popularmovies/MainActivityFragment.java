@@ -276,7 +276,8 @@ public class MainActivityFragment extends Fragment
 
     // Calculates the number of columns in the RecyclerView
     public static int numberOfColumns(Context context) {
-        int columnWidth = 150;
+        float columnWidth = (context.getResources().getDimension(R.dimen.main_poster_col_width)/
+                context.getResources().getDisplayMetrics().density);
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int numberofColumns = (int) (dpWidth / columnWidth);

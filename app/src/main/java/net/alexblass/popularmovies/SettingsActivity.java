@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 /**
- * Created by ajbla_000 on 6/1/2017.
+ * Settings activity to allow the user to toggle between sorting by rating or popularity.
  */
 
 public class SettingsActivity extends AppCompatActivity {

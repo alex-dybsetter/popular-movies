@@ -20,7 +20,7 @@
             android:paddingStart="@dimen/horizontal_margin"
             android:paddingTop="@dimen/title_padding"
             android:textColor="@android:color/white"
-            android:textSize="40sp"
+            android:textSize="48sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -47,7 +47,7 @@
             android:layout_marginStart="@dimen/release_date_horizontal_margin"
             android:layout_marginTop="@dimen/top_margin"
             android:textColor="@color/secondary_text"
-            android:textSize="24sp"
+            android:textSize="32sp"
             app:layout_constraintLeft_toRightOf="@+id/detail_imageview"
             app:layout_constraintTop_toBottomOf="@+id/detail_title_tv"
             tools:text="2015" />
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/top_margin"
             android:textColor="@color/secondary_text"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textStyle="italic"
             app:layout_constraintLeft_toLeftOf="@+id/detail_release_date_tv"
             app:layout_constraintTop_toBottomOf="@+id/detail_release_date_tv"
@@ -81,14 +81,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/horizontal_margin"
+            android:layout_marginLeft="0dp"
             android:layout_marginRight="@dimen/horizontal_margin"
-            android:layout_marginTop="@dimen/new_grouping_top_margin"
+            android:layout_marginTop="@dimen/top_margin"
             android:textColor="@color/secondary_text"
             android:textSize="@dimen/base_text"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="@+id/detail_imageview"
+            app:layout_constraintLeft_toLeftOf="@+id/detail_rating_tv"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detail_imageview"
+            app:layout_constraintTop_toBottomOf="@+id/detail_rating_tv"
             tools:text="Summary goes here." />
 
         <android.support.design.widget.FloatingActionButton
@@ -117,10 +117,11 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_margin="@dimen/parent_margin"
+            android:layout_marginTop="0dp"
             android:background="@color/divider"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detail_synopsis_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/detail_imageview" />
 
     </android.support.constraint.ConstraintLayout>
 

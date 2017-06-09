@@ -3,17 +3,8 @@ package net.alexblass.popularmovies.utilities;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
-import net.alexblass.popularmovies.R;
-import net.alexblass.popularmovies.data.FavoritesContract;
-import net.alexblass.popularmovies.data.FavoritesDbHelper;
 import net.alexblass.popularmovies.models.Movie;
 import net.alexblass.popularmovies.data.FavoritesContract.FavoritesEntry;
-
-import static android.R.attr.duration;
-import static android.R.attr.rating;
 
 /**
  * Loads a list of Movies using the AsyncTask to perform the
