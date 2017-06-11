@@ -11,10 +11,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +41,16 @@ public class MainActivityFragment extends Fragment
         LoaderManager.LoaderCallbacks<Movie[]>,
         SharedPreferences.OnSharedPreferenceChangeListener{
 
+    // Keys for our saved instance state
+    public String LIST_STATE_KEY = "list_state";
+    public String POSITION_KEY = "position";
+
+    // THe saved state
+    private Parcelable listState;
+
+    // Saved position of the recycler view
+    private int mPosition = RecyclerView.NO_POSITION;
+
     // Displays a message when there is no Internet or when there are no Movies found
     private TextView mErrorMessageTextView;
 
@@ -49,6 +62,8 @@ public class MainActivityFragment extends Fragment
 
     // A RecyclerView to hold all of our Movie posters and enable smooth scrolling
     private RecyclerView mRecyclerView;
+
+    private GridLayoutManager mLayoutManager;
 
     // Movie adapter to display the Movies correctly
     private MovieAdapter mAdapter;
@@ -86,8 +101,10 @@ public class MainActivityFragment extends Fragment
         // Find the RecyclerView and set our adapter to it so the posters
         // display in a grid format
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.movie_poster_grid);
-        mRecyclerView.setLayoutManager(
-                new GridLayoutManager(getActivity(), numberOfColumns(getContext())));
+        mLayoutManager = new GridLayoutManager(getActivity(), numberOfColumns(getContext()));
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new MovieAdapter(getActivity(), new Movie[0]);
         mAdapter.setClickListener(this);
@@ -141,7 +158,7 @@ public class MainActivityFragment extends Fragment
     // Pass the URI to the Movie loader to load the data
     @Override
     public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
-
+        MovieLoader movieLoader;
         switch(id) {
             case ALL_MOVIE_LOADER_ID:
                 // Build our URL to the movie DB API with our default sort
@@ -151,11 +168,11 @@ public class MainActivityFragment extends Fragment
                 Uri.Builder uriBuilder = baseUri.buildUpon();
 
                 mErrorMessage = getString(R.string.no_results);
-                return new MovieLoader(getContext(), uriBuilder.toString());
+                movieLoader = new MovieLoader(getContext(), uriBuilder.toString());
+                return movieLoader;
             case FAVES_MOVIE_LOADER_ID:
                 // Since we're pulling our data from the database, we do not need a URL
-                MovieLoader movieLoader = new MovieLoader(getContext(), null);
-
+                movieLoader = new MovieLoader(getContext(), null);
                 // If there are no favorites, show an error message
                 if(movieLoader.loadInBackground() == null){
                     mLoadingIndicator.setVisibility(View.GONE);
@@ -171,7 +188,7 @@ public class MainActivityFragment extends Fragment
 
     // When the Loader finishes, add the list of Movies to the adapter's data set
     @Override
-    public void onLoadFinished(Loader<Movie[]> loader, Movie[] moviesList) {
+    public void onLoadFinished(Loader<Movie[]> loader, final Movie[] moviesList) {
         mLoadingIndicator.setVisibility(View.GONE);
         mErrorMessageTextView.setText(mErrorMessage);
         mAdapter.setMovies(new Movie[0]);
@@ -179,6 +196,10 @@ public class MainActivityFragment extends Fragment
         if (moviesList != null && moviesList.length > 0){
             mAdapter.setMovies(moviesList);
         }
+
+        if (mPosition == RecyclerView.NO_POSITION) {
+            mPosition = 0;}
+        mRecyclerView.smoothScrollToPosition(mPosition);
 
     }
 
@@ -307,5 +328,33 @@ public class MainActivityFragment extends Fragment
         getLoaderManager().destroyLoader(ALL_MOVIE_LOADER_ID);
         mLoadingIndicator.setVisibility(View.VISIBLE);
         getLoaderManager().initLoader(FAVES_MOVIE_LOADER_ID, null, this);
+    }
+
+    // Save our app state so when the user returns to it, it keeps the same data from the last session
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        listState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(LIST_STATE_KEY, listState);
+
+        mPosition = mLayoutManager.findFirstVisibleItemPosition();
+        outState.putInt(POSITION_KEY, mPosition);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    // If there's a saved instance state, restore our app to that state
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if(savedInstanceState != null)
+        {
+            if (savedInstanceState.containsKey(LIST_STATE_KEY)) {
+                Parcelable listState = savedInstanceState
+                        .getParcelable(LIST_STATE_KEY);
+                mPosition = savedInstanceState.getInt(POSITION_KEY);
+                mLayoutManager.onRestoreInstanceState(listState);
+            }
+        }
     }
 }
