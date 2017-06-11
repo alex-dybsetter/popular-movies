@@ -9,7 +9,7 @@
 
         <TextView
             android:id="@+id/detail_title_tv"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero"
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:fontFamily="sans-serif"
@@ -20,7 +20,7 @@
             android:paddingStart="@dimen/horizontal_margin"
             android:paddingTop="@dimen/title_padding"
             android:textColor="@android:color/white"
-            android:textSize="40sp"
+            android:textSize="@dimen/title_size"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -47,7 +47,7 @@
             android:layout_marginStart="@dimen/release_date_horizontal_margin"
             android:layout_marginTop="@dimen/top_margin"
             android:textColor="@color/secondary_text"
-            android:textSize="24sp"
+            android:textSize="@dimen/release_date_size"
             app:layout_constraintLeft_toRightOf="@+id/detail_imageview"
             app:layout_constraintTop_toBottomOf="@+id/detail_title_tv"
             tools:text="2015" />
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/top_margin"
             android:textColor="@color/secondary_text"
-            android:textSize="20sp"
+            android:textSize="@dimen/duration_size"
             android:textStyle="italic"
             app:layout_constraintLeft_toLeftOf="@+id/detail_release_date_tv"
             app:layout_constraintTop_toBottomOf="@+id/detail_release_date_tv"
@@ -78,10 +78,10 @@
 
         <TextView
             android:id="@+id/detail_synopsis_tv"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/horizontal_margin"
-            android:layout_marginLeft="0dp"
+            android:layout_marginLeft="@dimen/zero"
             android:layout_marginRight="@dimen/horizontal_margin"
             android:layout_marginTop="@dimen/top_margin"
             android:textColor="@color/secondary_text"
@@ -93,8 +93,8 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/favorite_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/fab_size"
+            android:layout_height="@dimen/fab_size"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginLeft="@dimen/fab_margin"
             android:layout_marginRight="@dimen/fab_margin"
@@ -104,7 +104,7 @@
             android:padding="@dimen/fab_padding"
             android:src="@drawable/ic_favorite_border_white_48dp"
             app:backgroundTint="@color/fab_favorite"
-            app:borderWidth="0dp"
+            app:borderWidth="@dimen/zero"
             app:layout_constraintBottom_toTopOf="@+id/detail_release_date_tv"
             app:layout_constraintHorizontal_bias="0.884"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -114,10 +114,10 @@
 
         <View
             android:id="@+id/divider"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_width="@dimen/zero"
+            android:layout_height="@dimen/divider_height"
             android:layout_margin="@dimen/parent_margin"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="@dimen/zero"
             android:background="@color/divider"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

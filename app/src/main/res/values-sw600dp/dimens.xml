@@ -23,4 +23,11 @@
     <dimen name="section_title">20sp</dimen>
     <dimen name="base_text">18sp</dimen>
     <dimen name="review_title">22sp</dimen>
+
+    <dimen name="zero">0dp</dimen>
+
+    <dimen name="title_size">48sp</dimen>
+    <dimen name="release_date_size">32sp</dimen>
+    <dimen name="duration_size">24sp</dimen>
+
 </resources>
