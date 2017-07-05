@@ -135,26 +135,6 @@ public class MainActivityFragment extends Fragment
         return rootView;
     }
 
-//    // Pass the URI to the Movie loader to load the data
-//    @Override
-//    public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
-//        if(id == ALL_MOVIE_LOADER_ID) {
-//            // Build our URL to the movie DB API with our default sort
-//            requestUrlWithSort = formUrl();
-//
-//            Uri baseUri = Uri.parse(requestUrlWithSort);
-//            Uri.Builder uriBuilder = baseUri.buildUpon();
-//
-//            return new MovieLoader(getContext(), uriBuilder.toString());
-//        } else if (id == FAVES_MOVIE_LOADER_ID){
-//            // Since we're pulling our data from the database, we do not need a URL
-//            return new MovieLoader(getContext(), null);
-//        } else {
-//            return null;
-//        }
-//    }
-
-
     // Pass the URI to the Movie loader to load the data
     @Override
     public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
