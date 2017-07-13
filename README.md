@@ -7,3 +7,11 @@ reviews and movie trailers that will launch in their web browser or the YouTube 
 save their favorite movies to a local SQLite database of their favorite movies.
 
 Your API key should be added in your gradle.properties file for correct functionality.
+
+3rd Party Libs Credits:
+
+Butterknife by Jake Wharton: https://github.com/JakeWharton/butterknife
+License: http://www.apache.org/licenses/LICENSE-2.0
+
+Picasso by Square: http://square.github.io/picasso/
+License: http://www.apache.org/licenses/LICENSE-2.0
