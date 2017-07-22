@@ -30,4 +30,6 @@
     <dimen name="release_date_size">32sp</dimen>
     <dimen name="duration_size">24sp</dimen>
 
+    <dimen name="tmdbLogoHeight">165dp</dimen>
+    <dimen name="tmdbLogoWidth">250dp</dimen>
 </resources>
